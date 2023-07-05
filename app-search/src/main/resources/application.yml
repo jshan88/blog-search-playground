@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: app-search
+  profiles:
+    include: analytics, engine, persistence
+springdoc:
+  enable-native-support: true
+  api-docs:
+    enabled: true
+  swagger-ui:
+    path: /swagger-ui.html
+    config-url: /v3/api-docs/swagger-config
+    url: /api-document.yaml
