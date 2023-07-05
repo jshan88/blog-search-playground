@@ -22,7 +22,7 @@ API 명세서를 참고하여 인기 검색어 목록을 확인할 수 있습니
     - 첫째, 어플리케이션 메모리 (ConcurrentMap, MinMaxPriorityQueue) 에 저장하고, 시스템 리부팅 등을 고려한 DB 주기적 백업 
     - 둘째, 효율적인 메모리 관리를 위해 어플리케이션 메모리가 아닌 Redis 활용 (Sorted Set)
 
-구현 API는 .md 로 작성된 명세서 외에도 Swagger UI 를 통해 명세서와 실제 기능 테스트를 함께 확인하실 수 있습니다.
+구현 API는 .md 로 작성된 명세서 외에도 Swagger UI 를 통해 명세서와 실제 기능 테스트를 함께 확인하실 수 있습니다.  
 Swagger UI 는 Jar 구동 후, 다음 URL를 통해 접근 가능합니다. [*Swagger UI URL 링크*](http://localhost:8080/swagger-ui/index.html)
 
 ## 2. 우대사항 구현 내용
@@ -120,7 +120,7 @@ Swagger UI 는 Jar 구동 후, 다음 URL를 통해 접근 가능합니다. [*Sw
 </details>
 
 ### app-search
-`app-search` 모듈은 애플리케이션의 엔트리포인트로, 블로그 검색 기능을 위한 API 를 제공합니다. 
+- `app-search` 모듈은 애플리케이션의 엔트리포인트로, 블로그 검색 기능을 위한 API 를 제공합니다. 
 프로젝트 내의 모든 모듈들과 통합되어 검색의 전체 과정을 수행하고 처리합니다.  
 
 <details>
@@ -163,10 +163,14 @@ public List<TopKeywordsResponse> getPopularKeywords() {
 
 ### persistence
 
-`persistence` 모듈은 프로젝트에서 사용할 데이터 레이어 옵션을 구성하며, 각 데이터 레이어에 접근하기 위한 설정과 연동을 담당합니다.  
-&nbsp;데이터 레이어 옵션에는 첫째, 자바 메모리 (`ConcurrentHashMap`, `MinMaxPriorityQueue`) 내 저장하는 방법. 둘째, Redis(`Sorted Set`) 내 저장하는 방법 두가지를 구현하습니다. Scale-out이 가능하고, 애플리케이션 리소스에 부하가 있는 프로덕션에서 첫번째 방식은 적합하지 않을 수 있습니다.  
-&nbsp;그런 이유로 동 애플리케이션은 Redis를 기본 데이터 레이어로 사용하며, 과제 환경을 고려하여 임베디드 레디스 사용을 위한 오픈소스(ozimov)를 활용하였습니다.  
-&nbsp;또한 첫번째 방식에서는 MinMaxPriorityQueue 사용을 위해 google guava 오픈소스를 사용하였습니다. Java에서 제공하는 PriorityQueue와는 달리 큐의 양쪽에서 객체를 빼낼 수 있는 이점이 있어, 상위 검색 키워드를 보관하는 데이터 구조로 활용하였습니다. 해당 큐에 저장된 상위 검색 키워드는 스케줄 잡을 통해 RDB(In-memory h2)에 주기적으로 백업하게 됩니다. 
+- `persistence` 모듈은 프로젝트에서 사용할 데이터 레이어 옵션을 구성하며, 각 데이터 레이어에 접근하기 위한 설정과 연동을 담당합니다.  
+- 데이터 레이어 옵션에는 첫째, 자바 메모리 (`ConcurrentHashMap`, `MinMaxPriorityQueue`) 내 저장하는 방법.
+둘째, Redis(`Sorted Set`) 내 저장하는 방법 두가지를 구현하습니다.  
+- 디폴트 데이터 레이어 옵션은 Redis로 설정하였습니다. (자바 메모리에 저장 시 리소스 과부하, 부팅 시 휘발, Scale-out 메모리 공유 불가 문제 우려 존재)
+- 동 애플리케이션에서는 없는 기능이나, 실시간 인기 검색어에 대한 요구사항 발생시에도 TTL 옵션을 가진 또 다른 Redis Key 를 활용하여 쉽게 구현할 수 있는 이점이 있습니다.  
+- 해당 모듈에서는 추가적으로 Google Guava 와 Embedded Redis 사용을 위한 ozimov 오픈소스를 활용하였습니다.
+- Guava의 경우 MinMaxPriorityQueue를 사용하기 위함으로, 자바에서 제공하는 PriorityQueue와는 달리 큐의 양쪽에서 객체를 빼낼 수 있는 이점이 있습니다.  
+이를 첫번째 방식(HashMap)에서 상위 검색 키워드를 보관하는 데이터 구조로 활용하였습니다. 또한 해당 큐에 저장된 상위 검색 키워드는 스케줄 잡을 통해 RDB(In-memory h2)에 주기적으로 백업하게 됩니다. 
 
 <details>
 <summary>[코드 확인] TopKeywordsRdbCopier.java</summary>
@@ -212,8 +216,10 @@ public class TopKeywordsRdbCopier {
 
 ### search-engine
 
-`search-engine` 모듈은 외부 검색 엔진과의 Integration을 담당합니다. `SearchStrategy` 클래스를 사용하여 Primary Search Engine 과 Fallback Search Engine 을 설정하고, 이 둘은 `CircuitBreaker`의 상태에 따라 서로 간 전환됩니다. Circuit Breaker 적용을 위해 resilience4j 라이브러리를 활용합니다.  
-&nbsp;또한 이 모듈에서 `onSearchListener`(옵저버)를 설정하여 검색 이후 추가 프로세스를 설정할 수 있습니다. (예시 : 가장 많이 검색된 키워드 추적을 위한 onSearch 리스너)
+- `search-engine` 모듈은 외부 검색 엔진과의 Integration을 담당합니다. 
+- `SearchStrategy` 클래스를 사용하여 Primary Search Engine 과 Fallback Search Engine 을 설정하고, 이 둘은 `CircuitBreaker`의 상태에 따라 서로 간 전환됩니다.  
+- 또한 `SearchStrategy`에서 `onSearchListener`(옵저버)를 설정하여 검색 이후 추가 프로세스를 설정할 수 있습니다. (예시 : 가장 많이 검색된 키워드 추적을 위한 onSearch 리스너)
+- Circuit Breaker 적용을 위해 resilience4j 라이브러리를 활용합니다. 
 
 <details>
 <summary>[코드 확인] SearchStrategy.java</summary>
@@ -297,9 +303,9 @@ public class SearchStrategy {
 
 ### search-analytics
 
-`search-analytics` 모듈은 애플리케이션 내에서 수행된 검색을 분석합니다.
-검색 발생 시 수행 작업을 `onSearch` 메서드를 통해 구현하며, `getPopularKeywords` 메소드를 통해 가장 많이 검색된 키워드를 리턴해줍니다.
-해당 두개의 메소드를 구체화한 `KeywordTracker` 인스턴스 를 `KeywordTrackerFactory`를 통해 생성합니다.
+- `search-analytics` 모듈은 애플리케이션 내에서 수행된 검색을 분석합니다.
+- 검색 발생 시 수행 작업을 `onSearch` 메서드를 통해 구현하며, `getPopularKeywords` 메소드를 통해 가장 많이 검색된 키워드를 리턴해줍니다.
+- 해당 두개의 메소드를 구체화한 `KeywordTracker` 인스턴스 를 `KeywordTrackerFactory`를 통해 생성합니다.
 
 <details>
 <summary>[코드 확인] KeywordTrackerFactory.java</summary>
