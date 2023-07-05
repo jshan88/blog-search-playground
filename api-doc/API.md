@@ -41,7 +41,7 @@ curl -X GET "http://localhost:8080/blogs?query=카카오뱅크&sort=ACCURACY&pag
 없음
 
 ### Return
-[**List<TopKeywordsResponse>**](TopKeywordsResponse.md)
+[**List&ltTopKeywordsResponse&gt**](TopKeywordsResponse.md)
 
 ### Curl sample
 
