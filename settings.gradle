@@ -1,0 +1,6 @@
+rootProject.name = 'blog-search'
+include 'search-engine'
+include 'app-search'
+include 'search-analytics'
+include 'persistence'
+
