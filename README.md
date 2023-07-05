@@ -2,7 +2,7 @@
 ### ㅇ 지원자 정보 : 2126-000355_한진석_서버개발자
 [***Executable Jar 다운로드 링크***](https://github.com/jshan88/20230705_2126-000355/blob/main/app-search-1.0-SNAPSHOT-boot.jar)
 
-- 사용자가 키워드를 기반으로 블로그를 검색할 수 있는 블로그 검색 어플리케이션입니다.
+- 사용자가 키워드를 기반으로 블로그를 검색할 수 있는 애플리케이션입니다.
 - Kakao Open API를 활용하여 블로그 검색을 수행하며, 4xx 외 에러 발생 시, Circuit Breaker 설정에 따라 Naver Open API 로 대체 수행 됩니다. 
 - 또한 가장 많이 검색된 키워드 10건을 내림차순으로 제공하고 있습니다.
 
@@ -22,7 +22,7 @@ API 명세서를 참고하여 인기 검색어 목록을 확인할 수 있습니
     - 첫째, 어플리케이션 메모리 (ConcurrentMap, MinMaxPriorityQueue) 에 저장하고, 시스템 리부팅 등을 고려한 DB 주기적 백업 
     - 둘째, 효율적인 메모리 관리를 위해 어플리케이션 메모리가 아닌 Redis 활용 (Sorted Set)
 
-구현 API는 .md 로 작성된 명세서 외에도 Swagger UI 를 통해 명세서와 실제 기능 테스트를 같이 확인하실 수 있습니다.
+구현 API는 .md 로 작성된 명세서 외에도 Swagger UI 를 통해 명세서와 실제 기능 테스트를 함께 확인하실 수 있습니다.
 Swagger UI 는 Jar 구동 후, 다음 URL를 통해 접근 가능합니다. [*Swagger UI URL 링크*](http://localhost:8080/swagger-ui/index.html)
 
 ## 2. 우대사항 구현 내용
