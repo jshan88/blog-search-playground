@@ -495,7 +495,7 @@ class InMemoryKeywordCountMapTest {
 </details>
 
 <details>
-<summary>[테스트 코드]InMemoryKeywordTrackerTest.java</summary>
+<summary>[테스트 코드] InMemoryKeywordTrackerTest.java</summary>
 
 ```java
 class InMemoryKeywordTrackerTest {
