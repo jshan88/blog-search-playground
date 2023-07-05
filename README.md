@@ -18,7 +18,7 @@ API 명세서를 참고하여 블로그를 검색할 수 있습니다.
 API 명세서를 참고하여 인기 검색어 목록을 확인할 수 있습니다.
 
 - **GET** /blogs/top-keywords : [*API 명세서*](./api-doc/API.md#get-blogstop-keywords)
-- 동 기능은 두 가지 방법으로 구현하였습니다. 팩토리를 통해 둘 중 1개 방식을 취할 수 있습니다.
+- 인기 검색어 저장은 두 가지 방법으로 구현하였습니다. 팩토리를 통해 둘 중 1개 방식을 취할 수 있습니다.
     - 첫째, 어플리케이션 메모리 (ConcurrentMap, MinMaxPriorityQueue) 에 저장하고, 시스템 리부팅 등을 고려한 DB 주기적 백업 
     - 둘째, 효율적인 메모리 관리를 위해 어플리케이션 메모리가 아닌 Redis 활용 (Sorted Set)
 
