@@ -1,0 +1,32 @@
+plugins {
+    id 'java-library'
+}
+
+tasks.named("bootJar") {
+    enabled = false
+}
+tasks.named("jar") {
+    enabled = true
+}
+
+dependencies {
+    api 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'com.h2database:h2'
+    api 'org.springframework.boot:spring-boot-starter-data-redis'
+    // Embedded Redis 활용을 위한 오픈소스
+    implementation ('it.ozimov:embedded-redis:0.7.3') { exclude group: "org.slf4j", module: "slf4j-simple" }
+
+    // MinMaxPriorityQueue 활용을 위한 guava library
+    api 'com.google.guava:guava:32.0.1-jre'
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+    testImplementation 'org.mockito:mockito-core:4.5.1'
+    testImplementation 'org.mockito:mockito-junit-jupiter:4.5.1'
+    testImplementation 'org.mockito:mockito-inline:4.5.1'
+}
+
+test {
+    useJUnitPlatform()
+}
