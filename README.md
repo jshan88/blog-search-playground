@@ -445,8 +445,9 @@ public class RedisKeywordTracker implements KeywordTracker {
 
 #### 동시성 이슈가 발생할 수 있는 부분을 염두에 둔 구현 (예시. 키워드 별로 검색된 횟수의 정확도)
 - 애플리케이션 내 자체 메모리 활용 시, Concurrent 환경에서 Atomicity 를 보장할 수 있는 ConcurrentHashMap 을 활용하였습니다. 
-- ConcurrentHashMap 의 경우 이름에서 제시하듯 atomic 을 보장합니다. 
-- 아래 테스트 코드를 통해 원자성 확인을 하였습니다.
+- ConcurrentHashMap 의 경우 이름에서 제시하듯 동일 Key로의 다중 작업 발생 시 atomic 을 보장합니다. 
+- Redis는 싱글스레드 방식으로 요청을 처리하여 Atomicity를 보장합니다. 다만 시퀀셜한 작업 내 트랜잭션을 보장해야할 경우 추가적인 보완이 필요할 수 있습니다. (ex. 동일 트랜잭션 내 조회 -> 업데이트 발생 시)
+- 두 방식 모두 테스트 코드를 통해 재차 원자성을 확인했습니다.
 
 <details>
 <summary>[테스트 코드] InMemoryKeywordCountMapTest.java</summary>
