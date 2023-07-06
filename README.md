@@ -169,8 +169,7 @@ public List<TopKeywordsResponse> getPopularKeywords() {
 - 디폴트 데이터 레이어 옵션은 Redis로 설정하였습니다. (자바 메모리에 저장 시 리소스 과부하, 부팅 시 휘발, Scale-out 메모리 공유 불가 문제 우려 존재)
 - 동 애플리케이션에서는 없는 기능이나, 실시간 인기 검색어에 대한 요구사항 발생시에도 TTL 옵션을 가진 또 다른 Redis Key 를 활용하여 쉽게 구현할 수 있는 이점이 있습니다.  
 - 해당 모듈에서는 추가적으로 Google Guava 와 Embedded Redis 사용을 위한 ozimov 오픈소스를 활용하였습니다.
-- Guava의 경우 MinMaxPriorityQueue를 사용하기 위함으로, 자바에서 제공하는 PriorityQueue와는 달리 큐의 양쪽에서 객체를 빼낼 수 있는 이점이 있습니다.  
-이를 첫번째 방식(HashMap)에서 상위 검색 키워드를 보관하는 데이터 구조로 활용하였습니다. 또한 해당 큐에 저장된 상위 검색 키워드는 스케줄 잡을 통해 RDB(In-memory h2)에 주기적으로 백업하게 됩니다. 
+- Guava의 경우 MinMaxPriorityQueue를 사용하기 위함으로, 자바에서 제공하는 PriorityQueue와는 달리 큐의 양쪽에서 객체를 빼낼 수 있는 이점이 있고, 또한 Bounded Queue로 객체 수를 제한할수 있어 이를 상위 10개 검색 키워드를 보관하는 데이터 구조로 활용하였습니다. 해당 큐에 저장된 상위 검색 키워드는 스케줄 잡을 통해 RDB(In-memory h2)에 주기적으로 백업하게 됩니다. 
 
 <details>
 <summary>[코드 확인] TopKeywordsRdbCopier.java</summary>
