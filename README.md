@@ -273,7 +273,7 @@ public class SearchStrategy {
             result = fallbackSearchEngine.search(param);
         } catch (Exception e) {
             log.warn("The number of failed calls : {}", circuitBreaker.getMetrics().getNumberOfFailedCalls());
-            throw new CircuitBreakerException(e);
+            throw new CircuitBreakerException(e.getMessage(), e.getCause());
         }
 
         if (result != null && onSearchListener != null) {
