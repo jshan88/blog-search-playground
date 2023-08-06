@@ -687,5 +687,3 @@ class SearchStrategyTest {
 </details>
 
 </br>
-
- ### 이상 바쁜 시간 할애하시어 과제 리뷰 해주신 점 감사 말씀 드립니다.
