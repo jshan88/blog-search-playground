@@ -1,8 +1,4 @@
 # Blog Search Application
-### ㅇ 지원자 정보 : 2126-000355_한진석_서버개발자
-[***Executable Jar 다운로드 링크***](https://github.com/jshan88/20230705_2126-000355/blob/main/app-search-1.0-SNAPSHOT-boot.jar)
-
-### *** 2023.07.10 (월) - jmeter 로 부하 테스트 해보다가 카카오 API 쿼터리밋을 넘었습니다.. 429 Too Many Requests는 circuit breaker 대상으로 미처 등록을 못했는데 이 점 감안해주시면 대단히 감사하겠습니다. 
 
 - 사용자가 키워드를 기반으로 블로그를 검색할 수 있는 애플리케이션입니다.
 - Kakao Open API를 활용하여 블로그 검색을 수행하며, 4xx 외 에러 발생 시, Circuit Breaker 설정에 따라 Naver Open API 로 대체 수행 됩니다. 
