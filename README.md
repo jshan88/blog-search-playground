@@ -437,7 +437,7 @@ public class RedisKeywordTracker implements KeywordTracker {
 ```
 </details>
 
-### 2.2 Back-end 추가 요건
+### 2.2 비기능 요소 추가 고려 사항
 
 #### 트래픽이 많고, 저장되어 있는 데이터가 많음을 염두에 둔 구현
 - 대량 트래픽 유입 시, DB Disk I/O 에 의한 병목 가능성이 있습니다. 
