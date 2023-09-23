@@ -23,7 +23,7 @@ API 명세서를 참고하여 인기 검색어 목록을 확인할 수 있습니
 구현 API는 .md 로 작성된 명세서 외에도 Swagger UI 를 통해 명세서와 실제 기능 테스트를 함께 확인하실 수 있습니다.  
 Swagger UI 는 Jar 구동 후, 다음 URL를 통해 접근 가능합니다. [*Swagger UI URL 링크*](http://localhost:8080/swagger-ui/index.html)
 
-## 2. 우대사항 구현 내용
+## 2. 모듈 설명
 
 ### 2.1 멀티 모듈 프로젝트 구성
 
