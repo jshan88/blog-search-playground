@@ -34,10 +34,10 @@ class KakaoSearchEngineTest {
     void givenSearchParam_whenSearchInvoked_thenKakaoApiShouldBeInvoked() {
 
         // GIVEN
-        when(properties.getApiKey()).thenReturn("KakaoAK a1b39fd51e5f5d7521cd2f7286d31423");
+        when(properties.getApiKey()).thenReturn("");
         when(properties.getUri()).thenReturn("https://dapi.kakao.com/v2/search/blog");
         SearchParam param = SearchParam.builder()
-                            .query("카카오뱅크")
+                            .query("카카오")
                             .sort(SortType.ACCURACY)
                             .page(1)
                             .size(5)
