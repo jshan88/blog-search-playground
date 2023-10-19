@@ -39,7 +39,7 @@ class NaverSearchEngineTest {
         when(properties.getUri()).thenReturn("https://openapi.naver.com/v1/search/blog.json");
 
         SearchParam param = SearchParam.builder()
-            .query("카카오")
+            .query("네이버")
             .sort(SortType.ACCURACY)
             .page(1)
             .size(5)
