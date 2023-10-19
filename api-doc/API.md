@@ -29,7 +29,7 @@ Name | Type | Description | Notes
 ### Curl sample
 
 ```bash
-curl -X GET "http://localhost:8080/blogs?query=카카오뱅크&sort=ACCURACY&page=1&size=10"
+curl -X GET "http://localhost:8080/blogs?query=검색어&sort=ACCURACY&page=1&size=10"
 ```
 [[README 돌아가기]](../README.md#11-블로그-검색-기능#12-인기-검색어-목록-기능)
 
