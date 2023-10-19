@@ -23,8 +23,6 @@ public abstract class AbstractSearchEngine implements SearchEngine {
      * @param headers 요청 헤더
      * @param uri     요청 URI
      * @return 응답 결과
-     * @throws ApiResponseException API 응답 예외
-     * @see com.jshan.exception.ApiExceptionHandler
      */
     protected ResponseSpec getResponse(HttpHeaders headers, URI uri) {
         WebClient webClient = WebClient.create();
@@ -32,10 +30,11 @@ public abstract class AbstractSearchEngine implements SearchEngine {
             .uri(uri)
             .headers(h -> h.addAll(headers))
             .retrieve()
-            .onStatus(
-                HttpStatusCode::is4xxClientError,
-                clientResponse -> clientResponse.bodyToMono(String.class)
-                    .flatMap(errorBody -> Mono.error(new ApiResponseException(clientResponse.statusCode(), errorBody)))
-            );
+            ;
+//            .onStatus(
+//                HttpStatusCode::is4xxClientError,
+//                clientResponse -> clientResponse.bodyToMono(String.class)
+//                    .flatMap(errorBody -> Mono.error(new ApiResponseException(clientResponse.statusCode(), errorBody)))
+//            );
     }
 }

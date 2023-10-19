@@ -3,6 +3,7 @@ package com.jshan.persistence.memory;
 import com.google.common.collect.MinMaxPriorityQueue;
 import com.google.common.collect.Queues;
 import com.jshan.persistence.KeywordCount;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Queue;
 import org.springframework.context.annotation.Bean;

@@ -6,8 +6,10 @@ import com.jshan.dto.response.SearchResult;
 import com.jshan.engines.SearchEngine;
 import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
+import io.github.resilience4j.reactor.circuitbreaker.operator.CircuitBreakerOperator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import reactor.core.publisher.Mono;
 
 /**
  * 기본 검색 엔진(primarySearchEngine)과 대체 검색 엔진(fallbackSearchEngine) 을 활용<br>
@@ -49,23 +51,41 @@ public class SearchStrategy {
      * @return 검색 결과 {@link SearchResult}
      * @throws RuntimeException 검색 도중 오류 발생
      */
-    public SearchResult searchBlogs(SearchParam param) {
-        SearchResult result;
-        try {
-            result = circuitBreaker.executeCallable(() -> primarySearchEngine.search(param));
-        } catch (CallNotPermittedException e) {
-            log.info("Primary Search Engine is not callable : {}. Switched to the Fallback Search Engine.", e.getMessage());
-            result = fallbackSearchEngine.search(param);
-        } catch (Exception e) {
-            log.warn("The number of failed calls : {}", circuitBreaker.getMetrics().getNumberOfFailedCalls());
-            throw new CircuitBreakerException(e.getMessage(), e.getCause());
-        }
+    public Mono<SearchResult> searchBlogs(SearchParam param) {
 
-        if (result != null && onSearchListener != null) {
-            onSearchListener.onSearch(param.getQuery());
-        }
+        return primarySearchEngine.search(param)
+            .transform(CircuitBreakerOperator.of(circuitBreaker))
+            .onErrorResume(ex -> {
+                if(ex instanceof CallNotPermittedException notPermittedException) {
+                    log.warn("Primary search engine is down : {}", notPermittedException.getMessage());
+                    return fallbackSearchEngine.search(param);
+                } else {
+                    log.warn("The number of recorded exceptions : {} ", circuitBreaker.getMetrics().getNumberOfFailedCalls());
+                    return Mono.error(ex);
+                }
+            })
+            .doOnSuccess(searchResult -> {
+                if(searchResult != null && onSearchListener != null) {
+                    onSearchListener.onSearch(param.getQuery());
+                }
+            });
 
-        return result;
+//        Mono<SearchResult> result;
+//        try {
+//            result = circuitBreaker.executeCallable(() -> primarySearchEngine.search(param));
+//        } catch (CallNotPermittedException e) {
+//            log.info("Primary Search Engine is not callable : {}. Switched to the Fallback Search Engine.", e.getMessage());
+//            result = fallbackSearchEngine.search(param);
+//        } catch (Exception e) {
+//            log.warn("The number of failed calls : {}", circuitBreaker.getMetrics().getNumberOfFailedCalls());
+//            throw new CircuitBreakerException(e.getMessage(), e.getCause());
+//        }
+//
+//        if (result != null && onSearchListener != null) {
+//            onSearchListener.onSearch(param.getQuery());
+//        }
+//
+//        return result;
     }
 
     /**

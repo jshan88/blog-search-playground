@@ -6,6 +6,8 @@ import com.jshan.persistence.database.repository.TopKeywordRepository;
 import java.util.List;
 import java.util.Queue;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 

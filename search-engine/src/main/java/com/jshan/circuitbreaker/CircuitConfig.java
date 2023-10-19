@@ -5,14 +5,23 @@ import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig.SlidingWindowType;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry;
+import java.util.Set;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 /**
  * {@link CircuitBreaker} 인스턴스를 생성하고 구성하기 위한 Configuration Class
  */
 @Configuration
 public class CircuitConfig {
+
+    private static final Set<Class<? extends Throwable>> RECORD_EXCEPTIONS = Set.of(
+        WebClientResponseException.TooManyRequests.class,
+        WebClientResponseException.BadGateway.class,
+        WebClientResponseException.InternalServerError.class
+        //...
+    );
 
     /**
      * 사용자 정의 기반 CircuitBreakerRegistry 생성
@@ -26,7 +35,8 @@ public class CircuitConfig {
                     .slidingWindowType(SlidingWindowType.COUNT_BASED)
                     .slidingWindowSize(10)
                     .failureRateThreshold(30)
-                    .recordException(throwable -> !(throwable instanceof ApiResponseException))
+                    .recordException(throwable -> RECORD_EXCEPTIONS.contains(throwable.getClass()))
+//                    .recordException(throwable -> !(throwable instanceof ApiResponseException))
                     .build()
         );
     }

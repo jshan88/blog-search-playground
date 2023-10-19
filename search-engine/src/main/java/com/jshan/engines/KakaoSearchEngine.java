@@ -13,6 +13,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient.ResponseSpec;
 import org.springframework.web.util.UriComponentsBuilder;
+import reactor.core.publisher.Mono;
 
 /**
  * 카카오 검색엔진 클래스
@@ -25,7 +26,7 @@ public class KakaoSearchEngine extends AbstractSearchEngine {
     private final KakaoClientProperties properties;
 
     @Override
-    public SearchResult search(SearchParam param) {
+    public Mono<SearchResult> search(SearchParam param) {
         HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.AUTHORIZATION, properties.getApiKey());
         URI uri = buildUri(param);
@@ -46,8 +47,7 @@ public class KakaoSearchEngine extends AbstractSearchEngine {
                     .currentPage(param.getPage())
                     .documents(documents)
                     .build();
-            })
-            .block();
+            });
     }
 
     private URI buildUri(SearchParam param) {
