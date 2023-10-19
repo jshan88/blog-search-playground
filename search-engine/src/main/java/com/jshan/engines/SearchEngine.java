@@ -2,6 +2,7 @@ package com.jshan.engines;
 
 import com.jshan.dto.request.SearchParam;
 import com.jshan.dto.response.SearchResult;
+import reactor.core.publisher.Mono;
 
 /**
  * 검색엔진 인터페이스
@@ -14,5 +15,5 @@ public interface SearchEngine {
      * @param param {@link SearchParam}
      * @return 검색 결과 {@link SearchResult}
      */
-    SearchResult search(SearchParam param);
+    Mono<SearchResult> search(SearchParam param);
 }

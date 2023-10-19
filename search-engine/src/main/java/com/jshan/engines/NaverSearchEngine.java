@@ -15,6 +15,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient.ResponseSpec;
 import org.springframework.web.util.UriComponentsBuilder;
+import reactor.core.publisher.Mono;
 
 /**
  * 네이버 검색엔진 클래스
@@ -28,7 +29,7 @@ public class NaverSearchEngine extends AbstractSearchEngine {
     private final NaverClientProperties properties;
 
     @Override
-    public SearchResult search(SearchParam param) {
+    public Mono<SearchResult> search(SearchParam param) {
         HttpHeaders headers = new HttpHeaders();
         headers.add(CLIENT_ID, properties.getClientId());
         headers.add(CLIENT_SECRET, properties.getClientSecret());
@@ -49,8 +50,7 @@ public class NaverSearchEngine extends AbstractSearchEngine {
                     .currentPage(param.getPage())
                     .documents(documents)
                     .build();
-            })
-            .block();
+            });
     }
 
     private URI buildUri(SearchParam param) {

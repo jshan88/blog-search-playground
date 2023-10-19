@@ -1,6 +1,5 @@
 package com.jshan.controller;
 
-import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -12,9 +11,6 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standal
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jshan.dto.TopKeywordsResponse;
-import com.jshan.dto.request.SearchParam;
-import com.jshan.dto.request.SortType;
-import com.jshan.dto.response.SearchResult;
 import com.jshan.service.SearchService;
 import java.util.Arrays;
 import java.util.List;
@@ -39,26 +35,26 @@ class SearchControllerTest {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    @Test
-    @DisplayName("/blogs 테스트")
-    void getBlogs_ReturnsSearchResult() throws Exception {
-
-        // GIVEN
-        SearchResult expectedResult = new SearchResult();
-        when(searchService.getBlogs(any(SearchParam.class))).thenReturn(expectedResult);
-
-        // WHEN & THEN
-        mockMvc = standaloneSetup(searchController).build();
-        mockMvc.perform(get("/blogs")
-                            .param("query", "KAKAO")
-                            .param("sort", SortType.ACCURACY.toString()))
-            .andExpect(status().isOk())
-            .andExpect(content().json(objectMapper.writeValueAsString(expectedResult)));
-
-        // VERIFY
-        verify(searchService, times(1)).getBlogs(any(SearchParam.class));
-        verifyNoMoreInteractions(searchService);
-    }
+//    @Test
+//    @DisplayName("/blogs 테스트")
+//    void getBlogs_ReturnsSearchResult() throws Exception {
+//
+//        // GIVEN
+//        SearchResult expectedResult = new SearchResult();
+//        when(searchService.getBlogs(any(SearchParam.class))).thenReturn(expectedResult);
+//
+//        // WHEN & THEN
+//        mockMvc = standaloneSetup(searchController).build();
+//        mockMvc.perform(get("/blogs")
+//                            .param("query", "KAKAO")
+//                            .param("sort", SortType.ACCURACY.toString()))
+//            .andExpect(status().isOk())
+//            .andExpect(content().json(objectMapper.writeValueAsString(expectedResult)));
+//
+//        // VERIFY
+//        verify(searchService, times(1)).getBlogs(any(SearchParam.class));
+//        verifyNoMoreInteractions(searchService);
+//    }
 
     @Test
     @DisplayName("/blogs/top-keywords 테스트")

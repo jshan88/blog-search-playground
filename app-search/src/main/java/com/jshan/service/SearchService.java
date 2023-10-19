@@ -14,6 +14,7 @@ import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Mono;
 
 /**
  * 다양한 검색 엔진을 사용하여 블로그 검색을 수행하는 서비스 클래스 <br>
@@ -35,7 +36,7 @@ public class SearchService {
      * @param param 검색 쿼리 파라미터를 담은 {@link SearchParam} 객체
      * @return {@link SearchResult} 검색 결과
      */
-    public SearchResult getBlogs(SearchParam param) {
+    public Mono<SearchResult> getBlogs(SearchParam param) {
         KeywordTracker keywordTracker = keywordTrackerFactory.createKeywordTracker(TrackerType.REDIS);
 //        KeywordTracker keywordTracker = keywordTrackerFactory.createKeywordTracker(TrackerType.IN_MEMORY);
 
