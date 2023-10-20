@@ -24,9 +24,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.web.reactive.function.client.WebClientException;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
+import reactor.core.publisher.Mono;
+import reactor.test.StepVerifier;
 
 @ExtendWith(MockitoExtension.class)
-class SearchStrategyTest {
+class SearchStrategyTest_WebFlux {
 
     @Mock
     private SearchEngine primarySearchEngine;
@@ -61,21 +63,27 @@ class SearchStrategyTest {
         WebClientResponseException intentional = new WebClientResponseException("*** Intentional ****",
             HttpStatusCode.valueOf(500).value(),
             HttpStatus.INTERNAL_SERVER_ERROR.toString(), null, null, null);
-        when(primarySearchEngine.search(any())).thenThrow(intentional);
 
-        when(fallbackSearchEngine.search(any())).thenReturn(SearchResult.builder().build());
+        SearchResult expectedResult = SearchResult.builder().totalPage(10).build();
+
+        when(primarySearchEngine.search(any())).thenReturn(Mono.error(intentional));
+        when(fallbackSearchEngine.search(any())).thenReturn(Mono.just(expectedResult));
 
         // 10 회 이상 Intentional Exception 발생 (WebClientResponseException)
-        for (int i = 1; i <= 11; i++) {
-            try {
-                searchStrategy.searchBlogs(any());
-            } catch (Exception e) {
-            }
+        for(int i = 0; i < 10; i++) {
+            StepVerifier.create(searchStrategy.searchBlogs(any()))
+                .expectError(intentional.getClass())
+                .verify();
         }
 
         // THEN
         // Circuit Breaker OPEN 여부 확인
         assertEquals(CircuitBreaker.State.OPEN, circuitBreaker.getState());
+
+        StepVerifier.create(searchStrategy.searchBlogs(any()))
+            .expectNext(expectedResult)
+                .verifyComplete();
+
         // Fallback Search Engine 호출 여부 확인
         verify(fallbackSearchEngine, atLeastOnce()).search(any());
     }
